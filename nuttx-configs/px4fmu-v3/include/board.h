@@ -37,8 +37,6 @@
 #ifndef __ARCH_BOARD_BOARD_H
 #define __ARCH_BOARD_BOARD_H
 
-//#define PIXRACER_BETA_BOARD
-
 /************************************************************************************
  * Included Files
  ************************************************************************************/
@@ -201,8 +199,8 @@
 /*
  * UARTs.
  */
-#define GPIO_USART1_RX	GPIO_USART1_RX_2	/* ESP8266 */
-#define GPIO_USART1_TX	GPIO_USART1_TX_2
+#define GPIO_USART1_RX	GPIO_USART1_RX_1	/* console in from IO */
+#define GPIO_USART1_TX	0			/* USART1 is RX-only */
 
 #define GPIO_USART2_RX	GPIO_USART2_RX_2
 #define GPIO_USART2_TX	GPIO_USART2_TX_2
@@ -217,7 +215,7 @@
 #define GPIO_UART4_RX	GPIO_UART4_RX_1
 #define GPIO_UART4_TX	GPIO_UART4_TX_1
 
-#define GPIO_USART6_RX	GPIO_USART6_RX_1	/* RC_INPUT */
+#define GPIO_USART6_RX	GPIO_USART6_RX_1
 #define GPIO_USART6_TX	GPIO_USART6_TX_1
 
 #define GPIO_UART7_RX	GPIO_UART7_RX_1
@@ -233,9 +231,12 @@
  * CAN
  *
  * CAN1 is routed to the onboard transceiver.
+ * CAN2 is routed to the expansion connector.
  */
 #define GPIO_CAN1_RX	GPIO_CAN1_RX_3
 #define GPIO_CAN1_TX	GPIO_CAN1_TX_3
+#define GPIO_CAN2_RX	GPIO_CAN2_RX_1
+#define GPIO_CAN2_TX	GPIO_CAN2_TX_2
 
 /*
  * I2C
@@ -249,6 +250,10 @@
 #define GPIO_I2C1_SCL_GPIO	(GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTB|GPIO_PIN8)
 #define GPIO_I2C1_SDA_GPIO	(GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTB|GPIO_PIN9)
 
+#define GPIO_I2C2_SCL		GPIO_I2C2_SCL_1
+#define GPIO_I2C2_SDA		GPIO_I2C2_SDA_1
+#define GPIO_I2C2_SCL_GPIO	(GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTB|GPIO_PIN10)
+#define GPIO_I2C2_SDA_GPIO	(GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTB|GPIO_PIN11)
 
 /*
  * SPI
@@ -259,23 +264,25 @@
 #define GPIO_SPI1_MOSI	(GPIO_SPI1_MOSI_1|GPIO_SPEED_50MHz)
 #define GPIO_SPI1_SCK	(GPIO_SPI1_SCK_1|GPIO_SPEED_50MHz)
 
-
 #define GPIO_SPI2_MISO	(GPIO_SPI2_MISO_1|GPIO_SPEED_50MHz)
 #define GPIO_SPI2_MOSI	(GPIO_SPI2_MOSI_1|GPIO_SPEED_50MHz)
-
-#ifdef PIXRACER_BETA_BOARD
 #define GPIO_SPI2_SCK	(GPIO_SPI2_SCK_2|GPIO_SPEED_50MHz)
-#else
-#define GPIO_SPI2_SCK	(GPIO_SPI2_SCK_1|GPIO_SPEED_50MHz)
-#endif
+
+#define GPIO_SPI4_MISO	(GPIO_SPI4_MISO_1|GPIO_SPEED_50MHz)
+#define GPIO_SPI4_MOSI	(GPIO_SPI4_MOSI_1|GPIO_SPEED_50MHz)
+#define GPIO_SPI4_SCK	(GPIO_SPI4_SCK_1|GPIO_SPEED_50MHz)
 
 #ifdef CONFIG_STM32_SPI_DMA
 /*
-  only enable DMA on the sensor bus for now. We don't have enough
-  spare DMA channels for the other sensors at the moment
+  only enable DMA on the sensor bus and external for now. We don't
+  have enough spare DMA channels for the other buses
  */
-# define DMACHAN_SPI1_RX DMAMAP_SPI1_RX_2
-# define DMACHAN_SPI1_TX DMAMAP_SPI1_TX_1
+# define DMACHAN_SPI1_RX DMAMAP_SPI1_RX_1
+# define DMACHAN_SPI1_TX DMAMAP_SPI1_TX_2
+# define DMACHAN_SPI2_RX DMAMAP_SPI2_RX
+# define DMACHAN_SPI2_TX DMAMAP_SPI2_TX
+# define DMACHAN_SPI4_RX DMAMAP_SPI4_RX_2
+# define DMACHAN_SPI4_TX DMAMAP_SPI4_TX_2
 #endif
 
 /************************************************************************************
@@ -300,7 +307,7 @@ extern "C" {
  *
  * Description:
  *   All STM32 architectures must provide the following entry point.  This entry point
- *   is called early in the initialization -- after all memory has been configured
+ *   is called early in the intitialization -- after all memory has been configured
  *   and mapped but before any devices have been initialized.
  *
  ************************************************************************************/

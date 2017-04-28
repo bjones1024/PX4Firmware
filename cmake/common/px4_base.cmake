@@ -414,8 +414,10 @@ function(px4_add_upload)
 	set(serial_ports)
 	if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux")
 		list(APPEND serial_ports
-			/dev/serial/by-id/usb-3D_Robotics*
-			/dev/serial/by-id/pci-3D_Robotics*
+			/dev/serial/by-id/*3D_Robotics*
+			/dev/serial/by-id/*_PX4_*
+			/dev/serial/by-id/*_Autopilot*
+			/dev/serial/by-id/*Bitcraze*
 			)
 	elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Darwin")
 		list(APPEND serial_ports
@@ -456,6 +458,23 @@ function(px4_add_adb_push)
 		VERBATIM
 		USES_TERMINAL
 		)
+endfunction()
+
+function(px4_add_upload_aero)
+        px4_parse_function_args(
+                NAME px4_add_upload_aero
+                ONE_VALUE OS BOARD OUT BUNDLE
+                REQUIRED OS BOARD OUT BUNDLE
+                ARGN ${ARGN})
+
+        add_custom_target(${OUT}
+		COMMAND ${CMAKE_SOURCE_DIR}/Tools/aero_upload.sh ${BUNDLE}
+                DEPENDS ${BUNDLE}
+		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                COMMENT "uploading ${BUNDLE}"
+                VERBATIM
+                USES_TERMINAL
+                )
 endfunction()
 
 
